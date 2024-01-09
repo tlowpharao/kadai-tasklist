@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TasksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// routes/web.phpでは
-// '/' に GET メソッドでHTTPリクエストが来ると、 
-// view('welcome') が実行されることで、トップページが表示されます。
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [TasksController::class, 'index']);
+Route::resource('tasks', TasksController::class);
