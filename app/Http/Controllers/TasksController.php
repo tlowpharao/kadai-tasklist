@@ -15,7 +15,12 @@ class TasksController extends Controller
     public function index()
     {
         //取得レコードを変数に代入
-        $tasks = Task::all();
+        // $tasks = Task::all();
+        // idが小さい方から取得
+        $tasks = Task::orderBy('id', 'asc')->paginate(5);
+        
+        // idが大きい方から取得
+        // $tasks = Task::orderBy('id', 'desc')->paginate(5);
         
         return view('tasks.index', [     
             'tasks' => $tasks,       
