@@ -6,7 +6,6 @@
 <div class="prose ml-4">
         <h2>タスク 一覧</h2>
     </div>
-
     @if (isset($tasks))
         <table class="table table-zebra w-full my-4">
             <thead>
@@ -29,7 +28,7 @@
     @endif
     
     {{-- ページネーションのリンク --}}
-    {{ $tasks->links() }}
+   {{ $tasks->links() }}
 
     <a class="btn btn-primary" href="{{ route('tasks.create') }}">新規タスクの追加</a>
 

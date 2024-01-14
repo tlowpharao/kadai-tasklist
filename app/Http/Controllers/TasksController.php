@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
+use App\Models\User;
+
 
 class TasksController extends Controller
 {
@@ -13,18 +15,19 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //取得レコードを変数に代入
-        // $tasks = Task::all();
-        // idが小さい方から取得
-        $tasks = Task::orderBy('id', 'asc')->paginate(5);
+    {  
+    $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(5);
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+        }
         
-        // idが大きい方から取得
-        // $tasks = Task::orderBy('id', 'desc')->paginate(5);
-        
-        return view('tasks.index', [     
-            'tasks' => $tasks,       
-        ]);
+        return view('dashboard', $data);
     }
 
     /**
@@ -57,10 +60,15 @@ class TasksController extends Controller
             'status' => 'required|max:10',
         ]);
         
-        $task = new Task;
-        $task->content = $request->content;
-        $task->status = $request->status;
-        $task->save();
+        $request->user()->tasks()->create([
+            'content' => $request->content,
+            'status' => $request->status
+        ]);
+        
+        // $task = new Task;
+        // $task->content = $request->content;
+        // $task->status = $request->status;
+        // $task->save();
 
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -137,6 +145,6 @@ class TasksController extends Controller
         $task->delete();
 
         // トップページへリダイレクトさせる
-        return redirect('/');
+        return redirect('');
     }
 }
