@@ -1,11 +1,8 @@
 @if (Auth::check())
 
     <li>
-        <div class="flex-none">
-            <a class="link link-hover" href="{{ route('tasks.create') }}">新規タスクの投稿</a>
-        </div>
+        <div class="flex-none">{{ Auth::user()->name }}</div>
     </li>
-    
     <li class="divider lg:hidden"></li>
     {{-- ログアウトへのリンク --}}
     <li><a class="link link-hover" href="#" onclick="event.preventDefault();this.closest('form').submit();">Logout</a></li>
