@@ -16,7 +16,8 @@ class TasksController extends Controller
      */
     public function index()
     {  
-    $data = [];
+        $data = [];
+        
         if (\Auth::check()) {
             $user = \Auth::user();
             
@@ -40,7 +41,6 @@ class TasksController extends Controller
         //
         $task = new Task;
 
-     
         return view('tasks.create', [
             'task' => $task,
         ]);
@@ -82,13 +82,16 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        //
-        $task = Task::findOrFail($id);
-
-        // メッセージ詳細ビューでそれを表示
-        return view('tasks.show', [
-            'task' => $task,
-        ]);
+        $task = \App\Models\Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id)
+        {
+            // メッセージ詳細ビューでそれを表示
+            return view('tasks.show', [
+                'task' => $task,
+            ]);
+          }
+        return redirect('/');
     }
 
     /**
@@ -100,12 +103,16 @@ class TasksController extends Controller
     public function edit($id)
     {
         //
-        $task = Task::findOrFail($id);
-
-        // メッセージ編集ビューでそれを表示
-        return view('tasks.edit', [
+        $task = \App\Models\Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id){
+           
+           // メッセージ編集ビューでそれを表示
+            return view('tasks.edit', [
             'task' => $task,
-        ]);
+            ]); 
+        }
+        return redirect('/');
     }
 
     /**
@@ -117,18 +124,24 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $task = \App\Models\Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id){
+                
+            $request->validate([
             'content' => 'required|max:255',
             'status' => 'required|max:10',
-        ]);
-        //
-        $task = Task::findOrFail($id);
-        $task->content = $request->content;
-        $task->status = $request->status;
-        $task->save();
+            ]);
+            //
+            // $task = Task::findOrFail($id);
+            $task->content = $request->content;
+            $task->status = $request->status;
+            $task->save();
 
-        // トップページへリダイレクトさせる
-        return redirect('/');
+            // トップページへリダイレクトさせる
+            return redirect('/');
+        }
+        return redirect('/');  
     }
 
     /**
@@ -139,12 +152,17 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $task = Task::findOrFail($id);
-        // メッセージを削除
-        $task->delete();
+        $task = \App\Models\Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id){
+            
+            // $task = Task::findOrFail($id);
+            // メッセージを削除
+            $task->delete();
 
-        // トップページへリダイレクトさせる
+             // トップページへリダイレクトさせる
+            return redirect('');   
+        }
         return redirect('');
     }
 }
